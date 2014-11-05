@@ -1,15 +1,21 @@
 package main;
 
+import utils.ShellUtils;
+
 
 public class Recorder {
 
+	private String recordedEvents;
+	private ShellUtils shell;
+
 	public void startRecording(Device device) {
-		// TODO Auto-generated method stub
+		shell = new ShellUtils();
+		shell.startExecutingCommand("adb shell getevent -tt");
 
 	}
 
 	public void stopRecording() {
-		// TODO Auto-generated method stub
+		recordedEvents = shell.stopExecutingCommand();
 
 	}
 
