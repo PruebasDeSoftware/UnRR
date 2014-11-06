@@ -1,5 +1,7 @@
 package main;
 
+import gui.UnRRGUI;
+
 import java.awt.Dimension;
 
 public class UnRR {
@@ -9,9 +11,9 @@ public class UnRR {
 	private Dimension sourceScreenResolution;
 	private int sourceOrientation;
 
-	public UnRR(App app) {
+	public UnRR(App app, UnRRGUI gui) {
 		this.app = app;
-		recorder = new Recorder();
+		recorder = new Recorder(gui);
 	}
 
 	public void startRecording(Device device) {

@@ -19,4 +19,9 @@ public class Device {
 
 	}
 
+	public String getSerialNumber() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
