@@ -21,7 +21,7 @@ public class Device {
 
 	public String getSerialNumber() {
 		// TODO Auto-generated method stub
-		return null;
+		return "emulator-5554";
 	}
 
 }

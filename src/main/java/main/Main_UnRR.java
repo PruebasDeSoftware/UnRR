@@ -1,12 +1,15 @@
 package main;
 
+import gui.UnRRGUI;
 
 public class Main_UnRR {
 
 	public static void main(String[] args) {
 
-		Recorder recorder = new Recorder(null);
-		recorder.replay(null, new Device());
+		UnRRGUI gui = new UnRRGUI();
+
+		Recorder recorder = new Recorder(gui);
+		recorder.replay(new Device());
 
 	}
 
