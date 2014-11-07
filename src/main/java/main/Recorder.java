@@ -5,6 +5,7 @@ import gui.UnRRGUI;
 import java.awt.Dimension;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -19,7 +20,7 @@ public class Recorder {
 	private String recordedEvents;
 	private ShellUtils shell;
 
-	private Dimension sourceScreenResolution;
+	private Dimension sourceScreenResolution = new Dimension(1024, 600);
 	private int sourceOrientation;
 
 	public Recorder(UnRRGUI gui) {
@@ -50,8 +51,9 @@ public class Recorder {
 	public void replay(Device device) {
 		String replayerPath = "./lib/RERAN/replay.exe";
 		String translatorPath = "./lib/RERAN/translate.jar";
-		String scaledEventsPath = "./scaledEvents.txt";
-		String translatedEventsPath = "./translatedEvent.txt";
+		String recordedEventsFilePath = "./unrr/recordedEvents.txt";
+		String scaledEventsPath = "./unrr/scaledEvents.txt";
+		String translatedEventsPath = "./unrr/translatedEvents.txt";
 
 		// Install Replayer On device
 		try {
@@ -66,19 +68,26 @@ public class Recorder {
 													+ device.getSerialNumber()
 									+ " push -p " + replayerPath + " /data/local");
 		System.out.println(response);
-		String recordedEventsFilePath = "./unrr/recordedEvents.txt";
+		response = ShellUtils.executeCommand(gui.getPathToADB() + " -s "
+													+ device.getSerialNumber()
+												+ " shell chmod 766 /data/local/replay.exe");
+		System.out.println(response);
+
 		// scale events for target device
-		// TODO
+		int indexOfX = 4;
+		int indexOfY = 5;
+		ArrayList<String> scaledEventsLines = new ArrayList<String>();
 		try {
 			List<String> eventList = FileUtils.readLines(new File(recordedEventsFilePath));
 			String splitOn = "( )+";
 			for (String line : eventList) {
+				String scaledEventLine = line;
 				if ((line.lastIndexOf("event") != -1) && (line.lastIndexOf("device") == -1)
 					&& (line.lastIndexOf("name") == -1)) {
 					String[] tokens = StringUtils.split(line, splitOn);
 
-					String tokenX = tokens[4];
-					String tokenY = tokens[5];
+					String tokenX = tokens[indexOfX];
+					String tokenY = tokens[indexOfY];
 										
 					int x = Integer.parseInt(tokenX, 16);
 					int y = Integer.parseInt(tokenY, 16);
@@ -91,10 +100,15 @@ public class Recorder {
 					String hexX = StringUtils.leftPad(Integer.toHexString(newX), tokenX.length(),"0");
 					String hexY = StringUtils.leftPad(Integer.toHexString(newY), tokenY.length(),"0");
 					
-					// TODO save new line on scaledEvents
+					tokens[indexOfX] = hexX;
+					tokens[indexOfY] = hexY;
 
+					scaledEventLine = StringUtils.join(tokens, " ");
 				}
+				scaledEventsLines.add(scaledEventLine);
+
 			}
+			FileUtils.writeLines(new File(scaledEventsPath), scaledEventsLines);
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -109,25 +123,21 @@ public class Recorder {
 			e.printStackTrace();
 		}
 
-		ShellUtils.executeCommand("java -jar " + translatorPath + " " + scaledEventsPath + " "
+		response = ShellUtils.executeCommand("java -jar " + translatorPath + " " + scaledEventsPath
+												+ " "
 									+ translatedEventsPath);
 		System.out.println(response);
 		// send events to device
-		ShellUtils.executeCommand(gui.getPathToADB() + " push " + translatedEventsPath
+		response = ShellUtils.executeCommand(gui.getPathToADB() + " push " + translatedEventsPath
 									+ " /data/local");
 		System.out.println(response);
 		
 
 		// run events on replayer
-		ShellUtils
+		response = ShellUtils
 				.executeCommand(gui.getPathToADB()
-								+ " shell /data/local/./replay.exe /data/local/translatedEvents.txt");
+								+ " shell /data/local/replay.exe /data/local/translatedEvents.txt");
 		System.out.println(response);
-	}
-
-	public String getEventTrace() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

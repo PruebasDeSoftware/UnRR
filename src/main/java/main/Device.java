@@ -4,9 +4,11 @@ import java.awt.Dimension;
 
 public class Device {
 
+	private Dimension screenResolution;
+	private String serialNumber;
+
 	public Dimension getScreenResolution() {
-		// TODO Auto-generated method stub
-		return null;
+		return screenResolution;
 	}
 
 	public int getOrientation() {
@@ -20,8 +22,15 @@ public class Device {
 	}
 
 	public String getSerialNumber() {
-		// TODO Auto-generated method stub
-		return "emulator-5554";
+		return serialNumber;
+	}
+
+	public static Device getDummyDevice(String serialNumber, Dimension screenResolution) {
+		Device device = new Device();
+		device.serialNumber = serialNumber;
+		device.screenResolution = screenResolution;
+
+		return device;
 	}
 
 }
