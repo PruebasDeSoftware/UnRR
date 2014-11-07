@@ -20,13 +20,21 @@ public class Recorder {
 	private String recordedEvents;
 	private ShellUtils shell;
 
-	private Dimension sourceScreenResolution = new Dimension(1024, 600);
+	private Dimension sourceScreenResolution;
 	private int sourceOrientation;
 
-	public Recorder(UnRRGUI gui) {
+	private Device sourceDevice;
+
+	private String recordedEventsFilePath = "./unrr/recordedEvents.txt";
+
+	public Recorder(UnRRGUI gui, Device device) {
 		super();
 		this.gui = gui;
 		shell = new ShellUtils();
+
+		this.sourceDevice = device;
+		this.sourceScreenResolution = device.getScreenResolution();
+		this.sourceOrientation = device.getOrientation();
 	}
 
 	/**
@@ -34,24 +42,26 @@ public class Recorder {
 	 * 
 	 * @param device
 	 */
-	public void startRecording(Device device) {
-		this.sourceScreenResolution = device.getScreenResolution();
-		this.sourceOrientation = device.getOrientation();
+	public void startRecording() {
 
-		shell.startExecutingCommand(gui.getPathToADB() + " -s " + device.getSerialNumber()
+		shell.startExecutingCommand(gui.getPathToADB() + " -s " + sourceDevice.getSerialNumber()
 									+ " shell getevent -tt");
 
 	}
 
 	public void stopRecording() {
 		recordedEvents = shell.stopExecutingCommand();
-		// TODO save file
+		try {
+			FileUtils.write(new File(recordedEventsFilePath), recordedEvents);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void replay(Device device) {
 		String replayerPath = "./lib/RERAN/replay.exe";
 		String translatorPath = "./lib/RERAN/translate.jar";
-		String recordedEventsFilePath = "./unrr/recordedEvents.txt";
 		String scaledEventsPath = "./unrr/scaledEvents.txt";
 		String translatedEventsPath = "./unrr/translatedEvents.txt";
 

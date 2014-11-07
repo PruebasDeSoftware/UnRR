@@ -66,11 +66,14 @@ public class RecorderTest {
 	@Test
 	public void testReplay() {
 		UnRRGUI gui = new UnRRGUI();
+		
 		String serialNumber = "emulator-5554";
 		Dimension screenResolution = new Dimension(1024, 600);
 
-		Recorder recorder = new Recorder(gui);
-		recorder.replay(Device.getDummyDevice(serialNumber, screenResolution));
+		Device sourceDevice = Device.getDummyDevice(serialNumber, screenResolution);
+		
+		Recorder recorder = new Recorder(gui, sourceDevice);
+		recorder.replay(sourceDevice);
 
 		assertTrue(true);
 	}

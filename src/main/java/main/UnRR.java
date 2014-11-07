@@ -6,19 +6,19 @@ public class UnRR {
 
 	private App app;
 	private Recorder recorder;
+	private UnRRGUI gui;
 
 
 	public UnRR(App app, UnRRGUI gui) {
 		this.app = app;
-		recorder = new Recorder(gui);
+		this.gui = gui;
 	}
 
 	public void startRecording(Device device) {
-
-
 		device.startApp(app);
 
-		recorder.startRecording(device);
+		recorder = new Recorder(gui, device);
+		recorder.startRecording();
 	}
 
 	public void stopRecording() {
