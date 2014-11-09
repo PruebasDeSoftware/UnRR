@@ -40,6 +40,10 @@ public class DeviceTest {
 		App calculator = new App("com.android.calculator2", ".Calculator");
 
 		device.startApp(calculator);
+
+		App gestureBuilder = new App("com.android.gesture.builder", ".GestureBuilderActivity");
+
+		device.startApp(gestureBuilder);
 	}
 
 	@Test
