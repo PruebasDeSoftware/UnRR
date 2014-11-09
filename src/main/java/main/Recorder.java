@@ -100,6 +100,7 @@ public class Recorder {
 								/ sourceScreenResolution.width;
 					int newY = y * device.getScreenResolution().height
 								/ sourceScreenResolution.height;
+					System.out.println("(" + x + ", " + y + ") => (" + newX + ", " + newY + ")");
 					
 					String hexX = StringUtils.leftPad(Integer.toHexString(newX), tokenX.length(),"0");
 					String hexY = StringUtils.leftPad(Integer.toHexString(newY), tokenY.length(),"0");
@@ -132,14 +133,15 @@ public class Recorder {
 									+ translatedEventsPath);
 		System.out.println(response);
 		// send events to device
-		response = ShellUtils.executeCommand(gui.getPathToADB() + " push " + translatedEventsPath
+		response = ShellUtils.executeCommand(gui.getPathToADB() + " -s " + device.getSerialNumber()
+												+ " push " + translatedEventsPath
 									+ " /data/local");
 		System.out.println(response);
 		
 
 		// run events on replayer
 		response = ShellUtils
-				.executeCommand(gui.getPathToADB()
+				.executeCommand(gui.getPathToADB() + " -s " + device.getSerialNumber()
 								+ " shell /data/local/replay.exe /data/local/translatedEvents.txt");
 		System.out.println(response);
 	}
