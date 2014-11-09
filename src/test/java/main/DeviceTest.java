@@ -9,6 +9,8 @@ import org.junit.Test;
 
 public class DeviceTest {
 
+	private static final String TABLET_EMULATOR_SERIAL_NUMBER = "emulator-5554";
+
 	@Before
 	public void setUp() throws Exception {
 	}
@@ -19,7 +21,7 @@ public class DeviceTest {
 
 	@Test
 	public void testGetDevice() {
-		assertNotNull(Device.getDevice("emulator-5554"));
+		assertNotNull(Device.getDevice(TABLET_EMULATOR_SERIAL_NUMBER));
 	}
 
 	@Test
@@ -34,7 +36,10 @@ public class DeviceTest {
 
 	@Test
 	public void testStartApp() {
-		fail("Not yet implemented"); // TODO
+		Device device = Device.getDevice(TABLET_EMULATOR_SERIAL_NUMBER);
+		App calculator = new App("com.android.calculator2", ".Calculator");
+
+		device.startApp(calculator);
 	}
 
 	@Test

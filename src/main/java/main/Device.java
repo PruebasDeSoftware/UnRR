@@ -70,7 +70,10 @@ public class Device {
 	}
 
 	public void startApp(App app) {
-		// TODO Auto-generated method stub
+		String response = ShellUtils.executeCommand(UnRRGUI.getPathToADB() + " -s " + serialNumber
+													+ " shell am start -n " + app.getPackageName()
+													+ "/" + app.getMainActivity());
+		System.out.println(response);
 
 	}
 
