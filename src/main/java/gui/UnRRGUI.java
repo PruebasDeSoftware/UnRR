@@ -107,7 +107,7 @@ public class UnRRGUI extends JFrame {
 
 		txtPaquete = new JTextField();
 		panel_2.add(txtPaquete);
-		txtPaquete.setText("com.android.gesture.builder/.GestureBuilderActivity");
+		txtPaquete.setText("com.rj.pixelesque/.PixelArtEditor");
 		txtPaquete.setColumns(20);
 
 		panel_3 = new JPanel();

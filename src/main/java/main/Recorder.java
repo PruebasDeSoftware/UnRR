@@ -78,35 +78,48 @@ public class Recorder {
 		System.out.println(response);
 
 		// scale events for target device
-		int indexOfX = 4;
-		int indexOfY = 5;
+		int indexOfEventType = 3;
+		int indexOfIndicator = 4;
+		int indexOfValue = 5;
 		ArrayList<String> scaledEventsLines = new ArrayList<String>();
 		try {
 			List<String> eventList = FileUtils.readLines(new File(recordedEventsFilePath));
 			String splitOn = "( )+";
+			System.out.println("from " + sourceScreenResolution + " to "
+								+ device.getScreenResolution());
 			for (String line : eventList) {
 				String scaledEventLine = line;
 				if ((line.lastIndexOf("event") != -1) && (line.lastIndexOf("device") == -1)
 					&& (line.lastIndexOf("name") == -1)) {
 					String[] tokens = StringUtils.split(line, splitOn);
 
-					String tokenX = tokens[indexOfX];
-					String tokenY = tokens[indexOfY];
+					String eventTypeToken = tokens[indexOfEventType];
+					String indicatorToken = tokens[indexOfIndicator];
+					String valueToken = tokens[indexOfValue];
 										
-					int x = Integer.parseInt(tokenX, 16);
-					int y = Integer.parseInt(tokenY, 16);
+					int eventType = Integer.parseInt(eventTypeToken, 16);
+					int indicator = Integer.parseInt(indicatorToken, 16);
+					int value = Integer.parseInt(valueToken, 16);
+					if (eventType == 3) {
 
-					int newX = x * device.getScreenResolution().width
-								/ sourceScreenResolution.width;
-					int newY = y * device.getScreenResolution().height
-								/ sourceScreenResolution.height;
-					System.out.println("(" + x + ", " + y + ") => (" + newX + ", " + newY + ")");
+						if (indicator == 0) {
+							// X coordinate
+							value = value * device.getScreenResolution().width
+									/ sourceScreenResolution.width;
+						} else if (indicator == 1) {
+							// Y coordinate
+							value = value * device.getScreenResolution().height
+									/ sourceScreenResolution.height;
+						}
+					}
+
+					System.out.println("" + indicator + ": " + value);
 					
-					String hexX = StringUtils.leftPad(Integer.toHexString(newX), tokenX.length(),"0");
-					String hexY = StringUtils.leftPad(Integer.toHexString(newY), tokenY.length(),"0");
+					String hexValue = StringUtils.leftPad(	Integer.toHexString(value),
+														indicatorToken.length(), "0");
+
 					
-					tokens[indexOfX] = hexX;
-					tokens[indexOfY] = hexY;
+					tokens[indexOfValue] = hexValue;
 
 					scaledEventLine = StringUtils.join(tokens, " ");
 				}
