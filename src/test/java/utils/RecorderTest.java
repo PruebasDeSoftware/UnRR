@@ -6,9 +6,6 @@ package utils;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gui.UnRRGUI;
-
-import java.awt.Dimension;
-
 import main.Device;
 import main.Recorder;
 
@@ -68,9 +65,8 @@ public class RecorderTest {
 		UnRRGUI gui = new UnRRGUI();
 		
 		String serialNumber = "emulator-5554";
-		Dimension screenResolution = new Dimension(1024, 600);
 
-		Device sourceDevice = Device.getDummyDevice(serialNumber, screenResolution);
+		Device sourceDevice = Device.getDevice(serialNumber);
 		
 		Recorder recorder = new Recorder(gui, sourceDevice);
 		recorder.replay(sourceDevice);

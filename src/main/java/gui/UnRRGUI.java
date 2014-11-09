@@ -2,7 +2,7 @@ package gui;
 
 public class UnRRGUI {
 
-	public String getPathToADB() {
+	public static String getPathToADB() {
 		// TODO Auto-generated method stub
 		return "adb";
 	}
