@@ -1,12 +1,17 @@
 package utils;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.ProcessBuilder.Redirect;
+
+import org.apache.commons.lang3.StringUtils;
 
 public class ShellUtils {
 
 	public static String executeCommand(String command) {
+		System.out.println("EXECUTING: " + command);
 
 		StringBuffer output = new StringBuffer();
 
@@ -31,33 +36,34 @@ public class ShellUtils {
 
 	private Process process;
 
-	public boolean startExecutingCommand(String command) {
+	public void startExecutingCommand(String command, File file) {
+		System.out.println("start EXECUTING: " + command);
+		ProcessBuilder pb = new ProcessBuilder(StringUtils.split(command));
+
+		pb.redirectOutput(file);
+		System.out.println(pb.redirectOutput());
 		try {
-			process = Runtime.getRuntime().exec(command);
-			return true;
-		} catch (IOException e) {
+			process = pb.start();
+		} catch (IOException e3) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return false;
+			e3.printStackTrace();
+		}
+		assert pb.redirectInput() == Redirect.PIPE;
+		assert pb.redirectOutput().file() == file;
+		try {
+			assert process.getInputStream().read() == -1;
+		} catch (IOException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
 		}
 	}
 
-	public String stopExecutingCommand() {
+	public void stopExecutingCommand() {
+		if (process != null) {
 		process.destroy();
-
-		BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
-		StringBuffer output = new StringBuffer();
-		String line = "";
-		try {
-			while ((line = reader.readLine()) != null) {
-				output.append(line + "\n");
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("stoped process");
+			return;
 		}
-
-		return output.toString();
+		System.out.println("null process");
 	}
 }

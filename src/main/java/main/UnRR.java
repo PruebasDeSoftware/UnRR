@@ -25,7 +25,7 @@ public class UnRR {
 		recorder.stopRecording();
 	}
 
-	public void Replay(Device device) {
+	public void replayOn(Device device) {
 		device.startApp(app);
 
 		recorder.replay(device);

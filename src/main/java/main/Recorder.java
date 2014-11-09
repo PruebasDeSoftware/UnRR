@@ -17,7 +17,6 @@ public class Recorder {
 
 	private UnRRGUI gui;
 
-	private String recordedEvents;
 	private ShellUtils shell;
 
 	private Dimension sourceScreenResolution;
@@ -44,19 +43,14 @@ public class Recorder {
 	 */
 	public void startRecording() {
 
+		File file = new File(recordedEventsFilePath);
 		shell.startExecutingCommand(gui.getPathToADB() + " -s " + sourceDevice.getSerialNumber()
-									+ " shell getevent -tt");
+									+ " shell getevent -tt", file);
 
 	}
 
 	public void stopRecording() {
-		recordedEvents = shell.stopExecutingCommand();
-		try {
-			FileUtils.write(new File(recordedEventsFilePath), recordedEvents);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		shell.stopExecutingCommand();
 	}
 
 	public void replay(Device device) {

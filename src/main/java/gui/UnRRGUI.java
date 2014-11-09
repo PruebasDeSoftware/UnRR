@@ -95,8 +95,8 @@ public class UnRRGUI extends JFrame {
 
 		txtadb = new JTextField();
 		panel_1.add(txtadb);
-		txtadb.setText("./adb");
-		txtadb.setColumns(10);
+		txtadb.setText("adb");
+		txtadb.setColumns(20);
 
 		panel_2 = new JPanel();
 		contentPane.add(panel_2);
@@ -107,8 +107,8 @@ public class UnRRGUI extends JFrame {
 
 		txtPaquete = new JTextField();
 		panel_2.add(txtPaquete);
-		txtPaquete.setText("com.android");
-		txtPaquete.setColumns(10);
+		txtPaquete.setText("com.android.gesture.builder/.GestureBuilderActivity");
+		txtPaquete.setColumns(20);
 
 		panel_3 = new JPanel();
 		contentPane.add(panel_3);
@@ -121,9 +121,9 @@ public class UnRRGUI extends JFrame {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				UnRRGUI.this.updateADBPath();
 				unrr = new UnRR(UnRRGUI.this.getApp(), UnRRGUI.this);
 				unrr.startRecording(UnRRGUI.this.getSelectedDevice());
-				btnDetenerGrabacin.setEnabled(true);
 			}
 		});
 		panel_3.add(btnIniciarLaGrabacin);
@@ -132,7 +132,7 @@ public class UnRRGUI extends JFrame {
 		btnDetenerGrabacin.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				// TODO
+				unrr.stopRecording();
 			}
 		});
 		panel_3.add(btnDetenerGrabacin);
@@ -141,22 +141,29 @@ public class UnRRGUI extends JFrame {
 		btnReproducir.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				// TODO
+				unrr.replayOn(getSelectedDevice());
 			}
 		});
 		panel_3.add(btnReproducir);
 
+		updateADBPath();
 		loadDeviceList();
 	}
 
+	protected void updateADBPath() {
+		adbPath = txtadb.getText();
+
+	}
+
 	protected Device getSelectedDevice() {
-		// TODO Auto-generated method stub
-		return null;
+		int index = list.getSelectedIndex();
+		Device selectedDevice = Device.getDevice(deviceListModel.elementAt(index));
+		return selectedDevice;
 	}
 
 	protected App getApp() {
-		// TODO Auto-generated method stub
-		return null;
+		String[] tokens = StringUtils.split(txtPaquete.getText(), "/");
+		return new App(tokens[0], tokens[1]);
 	}
 
 	private void loadDeviceList() {
@@ -171,7 +178,6 @@ public class UnRRGUI extends JFrame {
 				readMode = true;
 			} else if (readMode) {
 				String serialNumberToken = StringUtils.split(line)[0];
-				System.out.println("Device " + serialNumberToken);
 				deviceListModel.addElement(serialNumberToken);
 			}
 		}
