@@ -5,7 +5,6 @@ import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.swing.AbstractListModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -15,6 +14,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import main.App;
 import main.Device;
@@ -71,17 +72,7 @@ public class UnRRGUI extends JFrame {
 
 		deviceListModel = new DefaultListModel<String>();
 
-		list = new JList<String>(new AbstractListModel() {
-			String[] values = new String[] {};
-
-			public int getSize() {
-				return values.length;
-			}
-
-			public Object getElementAt(int index) {
-				return values[index];
-			}
-		});
+		list = new JList<String>();
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		list.setBounds(67, 36, 114, 97);
 		panel.add(list);
@@ -94,6 +85,24 @@ public class UnRRGUI extends JFrame {
 		panel_1.add(lblAdbPath);
 
 		txtadb = new JTextField();
+		txtadb.getDocument().addDocumentListener(new DocumentListener() {
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				UnRRGUI.this.updateADBPath();
+			}
+
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				UnRRGUI.this.updateADBPath();
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				UnRRGUI.this.updateADBPath();
+
+			}
+		});
 		panel_1.add(txtadb);
 		txtadb.setText("adb");
 		txtadb.setColumns(20);
@@ -152,6 +161,7 @@ public class UnRRGUI extends JFrame {
 
 	protected void updateADBPath() {
 		adbPath = txtadb.getText();
+		this.loadDeviceList();
 
 	}
 
@@ -167,6 +177,7 @@ public class UnRRGUI extends JFrame {
 	}
 
 	private void loadDeviceList() {
+		deviceListModel.clear();
 		String response = ShellUtils.executeCommand(getPathToADB() + " devices");
 
 		String[] lines = StringUtils.split(response, System.lineSeparator());

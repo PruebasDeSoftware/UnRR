@@ -112,8 +112,6 @@ public class Recorder {
 									/ sourceScreenResolution.height;
 						}
 					}
-
-					System.out.println("" + indicator + ": " + value);
 					
 					String hexValue = StringUtils.leftPad(	Integer.toHexString(value),
 														indicatorToken.length(), "0");
